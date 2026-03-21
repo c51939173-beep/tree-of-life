@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>🌳 Tree of Life</title>
+  <title>ðŸŒ³ Tree of Life</title>
   <style>
 body {
   background: linear-gradient(to bottom, #e0f7fa, #fce4ec);
@@ -32,51 +32,102 @@ div {
   background: white;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-</style>
+ </style>
 </head>
 <body style="text-align:center; font-family:sans-serif;">
 
-<h2>🌳 Tree of Life 🌊</h2>
-<p>Under God's Almighty Wings ♾️🙏</p>
+<h2>ðŸŒ³ Tree of Life ðŸŒŠ</h2>
+<p>Under God's Almighty Wings â™¾ï¸ðŸ™</p>
 
 <p id="message"></p>
 <div id="rivers"></div>
 
-<script>
-const TRUSTED = ["Christina", "Matthew", "Rollins"];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// 🔑 Your config
+const firebaseConfig = {
+  apiKey: "AIzaSyAgmfrKCJ-dHhoGfidbTsL-L5MSbi3Q5vY",
+  authDomain: "tree-of-life-48261.firebaseapp.com",
+  databaseURL: "https://tree-of-life-48261-default-rtdb.firebaseio.com",
+  projectId: "tree-of-life-48261",
+  storageBucket: "tree-of-life-48261.firebasestorage.app",
+  messagingSenderId: "82581077566",
+  appId: "1:82581077566:web:e1bfdc1c4fdadc5e595b6f"
+ };
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase();
+const auth = getAuth();
+
+// 🌊 Database
+const blessingsRef = ref(db, 'blessings');
 
 let blessings = {
-  "Pistons": 1,
-  "Girona": 1,
-  "Hiddekel": 1,
-  "Euphoric": 1
+  Pistons: 1,
+  Girona: 1,
+  Hiddekel: 1,
+  Euphoric: 1
 };
 
-// 🛡️ Excalibur Protection System
-function excaliburGuard(action) {
-  const harmfulActions = ["hack", "delete_all", "corrupt", "attack"];
-
-  if (harmfulActions.includes(action)) {
-    document.getElementById("message").innerText =
-      "🛡️ Excalibur Activated: Protection engaged under God's almighty wings ♾️🙏";
-    return false;
+// 🔄 Real-time updates
+onValue(blessingsRef, (snapshot) => {
+  if (snapshot.exists()) {
+    blessings = snapshot.val();
+  } else {
+    set(blessingsRef, blessings);
   }
-  return true;
-}
-
-// 🌿 Authentication
-let user = prompt("Enter thy name:");
-
-if (!TRUSTED.includes(user)) {
-  document.getElementById("message").innerText =
-    "🛡️ Access not granted. Remain in peace under God's almighty wings.";
-} else {
-  document.getElementById("message").innerText =
-    "🕊️ Welcome " + user + "! Bless the rivers with joy 🌸";
   render();
-}
+});
 
-// 🌊 Render rivers
+// 🔐 LOGIN
+window.login = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  await signInWithEmailAndPassword(auth, email, password);
+};
+
+// 🆕 SIGN UP
+window.signup = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  await createUserWithEmailAndPassword(auth, email, password);
+};
+
+// 🚪 LOGOUT
+window.logout = function() {
+  signOut(auth);
+};
+
+// 👤 AUTH STATE
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    document.getElementById("user").innerText = user.email;
+  } else {
+    document.getElementById("auth").style.display = "block";
+    document.getElementById("app").style.display = "none";
+  }
+});
+
+// 🌸 Bless
+window.bless = function(river) {
+  blessings[river]++;
+  set(blessingsRef, blessings);
+};
+
+// 🎨 Render
 function render() {
   const container = document.getElementById("rivers");
   container.innerHTML = "";
@@ -88,21 +139,25 @@ function render() {
       <h3>${river} 🌊</h3>
       <p>Blessings: ${blessings[river]}</p>
       <button onclick="bless('${river}')">🌸 Bless</button>
-      <hr/>
     `;
 
     container.appendChild(div);
   }
 }
-
-// 🌸 Bless action (protected)
-function bless(river) {
-  if (!excaliburGuard("bless")) return;
-
-  blessings[river]++;
-  render();
-}
 </script>
+<div id="auth">
+  <h3>Login 🔐</h3>
+  <input id="email" placeholder="Email"><br><br>
+  <input id="password" type="password" placeholder="Password"><br><br>
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Sign Up</button>
+</div>
+
+<div id="app" style="display:none;">
+  <p>Welcome: <span id="user"></span></p>
+  <button onclick="logout()">Logout</button>
+  <div id="rivers"></div>
+</div>
 
 </body>
 </html>
