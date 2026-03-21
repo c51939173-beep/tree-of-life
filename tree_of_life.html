@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🌳 Tree of Life</title>
+</head>
+<body style="text-align:center; font-family:sans-serif;">
+
+<h2>🌳 Tree of Life 🌊</h2>
+<p>Under God's Almighty Wings ♾️🙏</p>
+
+<p id="message"></p>
+<div id="rivers"></div>
+
+<script>
+const TRUSTED = ["Christina", "Matthew", "Rollins"];
+
+let blessings = {
+  "Pistons": 1,
+  "Girona": 1,
+  "Hiddekel": 1,
+  "Euphoric": 1
+};
+
+// 🛡️ Excalibur Protection System
+function excaliburGuard(action) {
+  const harmfulActions = ["hack", "delete_all", "corrupt", "attack"];
+
+  if (harmfulActions.includes(action)) {
+    document.getElementById("message").innerText =
+      "🛡️ Excalibur Activated: Protection engaged under God's almighty wings ♾️🙏";
+    return false;
+  }
+  return true;
+}
+
+// 🌿 Authentication
+let user = prompt("Enter thy name:");
+
+if (!TRUSTED.includes(user)) {
+  document.getElementById("message").innerText =
+    "🛡️ Access not granted. Remain in peace under God's almighty wings.";
+} else {
+  document.getElementById("message").innerText =
+    "🕊️ Welcome " + user + "! Bless the rivers with joy 🌸";
+  render();
+}
+
+// 🌊 Render rivers
+function render() {
+  const container = document.getElementById("rivers");
+  container.innerHTML = "";
+
+  for (let river in blessings) {
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <h3>${river} 🌊</h3>
+      <p>Blessings: ${blessings[river]}</p>
+      <button onclick="bless('${river}')">🌸 Bless</button>
+      <hr/>
+    `;
+
+    container.appendChild(div);
+  }
+}
+
+// 🌸 Bless action (protected)
+function bless(river) {
+  if (!excaliburGuard("bless")) return;
+
+  blessings[river]++;
+  render();
+}
+</script>
+
+</body>
+</html>
